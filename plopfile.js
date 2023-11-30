@@ -1,4 +1,4 @@
-export default function(plop) {
+export default function (plop) {
   plop.setGenerator('day', {
     description: 'Add a day',
     prompts: [
@@ -15,5 +15,5 @@ export default function(plop) {
         templateFiles: 'template/**/*',
       },
     ],
-  });
+  })
 };

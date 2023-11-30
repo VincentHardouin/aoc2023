@@ -1,8 +1,11 @@
 {
   "name": "aoc2023",
+  "type": "module",
   "version": "1.0.0",
   "description": "advent of code 2023",
-  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -11,9 +14,6 @@
     "generate:day": "plop day",
     "get:input": "node scripts/get-day-input"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "lodash": "^4.17.21",
     "vite": "^5.0.4",

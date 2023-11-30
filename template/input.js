@@ -1,10 +1,10 @@
-import { join } from 'node:path';
-import { readFileSync }  from 'node:fs';
+import { join } from 'node:path'
+import { readFileSync } from 'node:fs'
 
-const __dirname = new URL('.', import.meta.url).pathname;
+const __dirname = new URL('.', import.meta.url).pathname
 
 function getInput() {
-  return parseInputString(readFileSync(join(__dirname, 'input.txt'), 'utf8').toString());
+  return parseInputString(readFileSync(join(__dirname, 'input.txt'), 'utf8').toString())
 }
 
 function parseInputString(input) {
@@ -12,11 +12,11 @@ function parseInputString(input) {
     .trim()
     .split('\n')
     .map((value) => {
-      return value;
-    });
+      return value
+    })
 }
 
 export {
   getInput,
   parseInputString,
-};
+}
