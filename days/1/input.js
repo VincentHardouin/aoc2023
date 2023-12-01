@@ -12,7 +12,13 @@ function parseInputString(input) {
     .trim()
     .split('\n')
     .map((value) => {
-      return value
+      return value.split('')
+        .map((v) => {
+          return Number.parseInt(v, 10)
+        })
+        .filter((v) => {
+          return !Number.isNaN(v)
+        })
     })
 }
 
