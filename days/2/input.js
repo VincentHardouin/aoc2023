@@ -11,8 +11,13 @@ function parseInputString(input) {
   return input
     .trim()
     .split('\n')
-    .map((value) => {
-      return value
+    .map((line) => {
+      const parts = line.split(':')
+      const gameId = Number(parts[0].split(' ').at('-1'))
+      return {
+        gameId,
+        game: parts[1].trim(),
+      }
     })
 }
 
