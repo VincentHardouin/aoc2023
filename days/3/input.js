@@ -11,9 +11,6 @@ function parseInputString(input) {
   return input
     .trim()
     .split('\n')
-    .map((value) => {
-      return value
-    })
 }
 
 export {
