@@ -1,18 +1,17 @@
 import { getInput } from './input.js'
 
 function getResult(input = getInput()) {
-  input
-    .forEach((card, index) => {
+  return input
+    .map((card, index) => {
       const winningNumbers = new Set(card.winningNumbers)
-      const cardsWons = card.numbers
+      card.numbers
         .filter(number => winningNumbers.has(number))
-
-      cardsWons.forEach((cardWon, cardIndex) => {
-        input[index + 1 + cardIndex].instance += 1 * card.instance
-      })
+        .forEach((cardWon, cardIndex) => {
+          input[index + 1 + cardIndex].instance += 1 * card.instance
+        })
+      return card.instance
     })
-
-  return input.reduce((a, b) => a + b.instance, 0)
+    .reduce((a, b) => a + b, 0)
 }
 
 export {
