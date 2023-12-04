@@ -12,7 +12,12 @@ function parseInputString(input) {
     .trim()
     .split('\n')
     .map((value) => {
-      return value
+      const parts = value.split(':')[1].trim().split('|')
+      return {
+        winningNumbers: parts[0].trim().split(/\s+/).map(value => Number.parseInt(value)),
+        numbers: parts[1].trim().split(/\s+/).map(value => Number.parseInt(value)),
+        instance: 1,
+      }
     })
 }
 
