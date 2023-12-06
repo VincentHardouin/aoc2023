@@ -8,12 +8,13 @@ function getInput() {
 }
 
 function parseInputString(input) {
-  return input
+  const line = input
     .trim()
     .split('\n')
-    .map((value) => {
-      return value
-    })
+  const time = line[0].split(':')[1].trim().split(/\s+/).map(n => Number(n))
+  const distance = line[1].split(':')[1].trim().split(/\s+/).map(n => Number(n))
+
+  return time.map((time, i) => ({ time, distance: distance[i] }))
 }
 
 export {
