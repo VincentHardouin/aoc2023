@@ -12,7 +12,11 @@ function parseInputString(input) {
     .trim()
     .split('\n')
     .map((value) => {
-      return value
+      const [hand, bid] = value.split(' ')
+      return {
+        hand: hand.split(''),
+        bid: Number(bid),
+      }
     })
 }
 
