@@ -8,12 +8,23 @@ function getInput() {
 }
 
 function parseInputString(input) {
-  return input
+  const [instructions, steps] = input
     .trim()
-    .split('\n')
-    .map((value) => {
-      return value
-    })
+    .split('\n\n')
+
+  const stepsArray = steps.split('\n').map((step) => {
+    const [stepName, stepDirections] = step.split('=')
+    return {
+      stepName: stepName.trim(),
+      L: stepDirections.split(',')[0].trim().slice(1),
+      R: stepDirections.split(',')[1].trim().slice(0, -1),
+    }
+  })
+
+  return {
+    instructions,
+    steps: stepsArray,
+  }
 }
 
 export {
