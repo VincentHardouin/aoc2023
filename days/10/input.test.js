@@ -5,6 +5,7 @@ describe('day10 | input', () => {
   it('should return array of int for each line', () => {
     const result = input.getInput()
 
-    expect(result).toBe('')
+    expect(result.length).toBe(140)
+    expect(result[0].length).toBe(140)
   })
 })
