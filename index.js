@@ -3,7 +3,6 @@ import { join } from 'node:path'
 import { argv } from 'node:process'
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
-import { days } from './days/index.js'
 
 const __dirname = new URL('.', import.meta.url).pathname
 
@@ -33,7 +32,7 @@ function getArgv() {
 }
 
 async function getDayResult(day, part) {
-  const dayPath = join(__dirname, './days', days[day - 1], 'index.js')
+  const dayPath = join(__dirname, './days', `${day}`, 'index.js')
   const dayModule = await import(dayPath)
   console.time('t')
   console.log(`Day: ${day}, Part: ${part}, Result: ${dayModule.results[part - 1]()}`)
