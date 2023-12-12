@@ -11,9 +11,8 @@ function parseInputString(input) {
   return input
     .trim()
     .split('\n')
-    .map((value) => {
-      return value
-    })
+    .map(l => l.split(' '))
+    .map(([l, r]) => [l, r.split(',').map(n => +n)])
 }
 
 export {
