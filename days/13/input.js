@@ -10,9 +10,9 @@ function getInput() {
 function parseInputString(input) {
   return input
     .trim()
-    .split('\n')
-    .map((value) => {
-      return value
+    .split('\n\n')
+    .map((part) => {
+      return part.split('\n').map(line => line.split(''))
     })
 }
 
