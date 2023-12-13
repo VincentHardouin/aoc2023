@@ -6,28 +6,8 @@ function getResult(input = getInput()) {
 }
 
 function findReflection(grid) {
-  let horizontalLineToSkip
-  let verticalLineToSkip
-
-  for (let i = 1; i < grid.length; i++) {
-    const length = Math.min(i, grid.length - i)
-    const topPart = grid.slice(i - length, i)
-    const bottomPart = grid.slice(i, i + length).reverse()
-    if (_.isEqual(topPart, bottomPart)) {
-      horizontalLineToSkip = i
-      break
-    }
-  }
-
-  for (let i = 1; i < grid[0].length; i++) {
-    const length = Math.min(i, grid[0].length - i)
-    const leftPart = grid.map(row => row.slice(i - length, i))
-    const rightPart = grid.map(row => row.slice(i, i + length).reverse())
-    if (_.isEqual(leftPart, rightPart)) {
-      verticalLineToSkip = i
-      break
-    }
-  }
+  const horizontalLineToSkip = getSymmetryLine(grid)
+  const verticalLineToSkip = getSymmetryLine(transpose(grid))
 
   for (let y = 0; y < grid.length; y++) {
     for (let x = 0; x < grid[0].length; x++) {
@@ -40,27 +20,33 @@ function findReflection(grid) {
       else
         copy[y][x] = '#'
 
-      for (let i = 1; i < copy.length; i++) {
-        if (i === horizontalLineToSkip)
-          continue
-        const length = Math.min(i, copy.length - i)
-        const topPart = copy.slice(i - length, i)
-        const bottomPart = copy.slice(i, i + length).reverse()
-        if (_.isEqual(topPart, bottomPart))
-          return i * 100
-      }
+      const horizontalLine = getSymmetryLine(copy, horizontalLineToSkip)
+      if (horizontalLine)
+        return horizontalLine * 100
 
-      for (let i = 1; i < copy[0].length; i++) {
-        if (i === verticalLineToSkip)
-          continue
-        const length = Math.min(i, copy[0].length - i)
-        const leftPart = copy.map(row => row.slice(i - length, i))
-        const rightPart = copy.map(row => row.slice(i, i + length).reverse())
-        if (_.isEqual(leftPart, rightPart))
-          return i
-      }
+      const verticalLine = getSymmetryLine(transpose(copy), verticalLineToSkip)
+      if (verticalLine)
+        return verticalLine
     }
   }
+}
+
+function transpose(array) {
+  return array[0].map((_, colIndex) => array.map(row => row[colIndex]))
+}
+
+function getSymmetryLine(grid, skipLine = 0) {
+  for (let i = 1; i < grid.length; i++) {
+    if (i === skipLine)
+      continue
+
+    const length = Math.min(i, grid.length - i)
+    const topPart = grid.slice(i - length, i)
+    const bottomPart = grid.slice(i, i + length).reverse()
+    if (_.isEqual(topPart, bottomPart))
+      return i
+  }
+  return null
 }
 
 export {

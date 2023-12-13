@@ -6,21 +6,31 @@ function getResult(input = getInput()) {
 }
 
 function findReflection(grid) {
+  const horizontalLine = getSymmetryLine(grid)
+  if (horizontalLine)
+    return horizontalLine * 100
+
+  const verticalLine = getSymmetryLine(transpose(grid))
+  if (verticalLine)
+    return verticalLine
+}
+
+function transpose(array) {
+  return array[0].map((_, colIndex) => array.map(row => row[colIndex]))
+}
+
+function getSymmetryLine(grid, skipLine = 0) {
   for (let i = 1; i < grid.length; i++) {
+    if (i === skipLine)
+      continue
+
     const length = Math.min(i, grid.length - i)
     const topPart = grid.slice(i - length, i)
     const bottomPart = grid.slice(i, i + length).reverse()
     if (_.isEqual(topPart, bottomPart))
-      return i * 100
-  }
-
-  for (let i = 1; i < grid[0].length; i++) {
-    const length = Math.min(i, grid[0].length - i)
-    const leftPart = grid.map(row => row.slice(i - length, i))
-    const rightPart = grid.map(row => row.slice(i, i + length).reverse())
-    if (_.isEqual(leftPart, rightPart))
       return i
   }
+  return null
 }
 
 export {
