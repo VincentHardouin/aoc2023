@@ -22,72 +22,90 @@ function getResult(input = getInput()) {
     .reduce((acc, row, i) => acc + (tilted.length - i) * row, 0)
 }
 
-function tiltNorth(grid) {
-  const g = transpose(grid)
+class Tilt {
+  constructor(grid) {
+    this.grid = grid
+  }
 
-  for (let i = 0; i < g.length; i++) {
-    for (let j = 1; j < g[i].length; j++) {
-      if (g[i][j] === 'O') {
-        for (let k = j - 1; k >= 0; k--) {
-          if (g[i][k] === 'O' || g[i][k] === '#') {
-            g[i][j] = '.'
-            g[i][k + 1] = 'O'
-            break
-          }
-          if (k === 0) {
-            g[i][k] = 'O'
-            g[i][j] = '.'
+  north() {
+    const g = transpose(this.grid)
+
+    for (let i = 0; i < g.length; i++) {
+      for (let j = 1; j < g[i].length; j++) {
+        if (g[i][j] === 'O') {
+          for (let k = j - 1; k >= 0; k--) {
+            if (g[i][k] === 'O' || g[i][k] === '#') {
+              g[i][j] = '.'
+              g[i][k + 1] = 'O'
+              break
+            }
+            if (k === 0) {
+              g[i][k] = 'O'
+              g[i][j] = '.'
+            }
           }
         }
       }
     }
+
+    this.grid = transpose(g)
+    return this
   }
 
-  return transpose(g)
-}
+  west() {
+    this
+      .rotateClockwise()
+      .north()
+      .rotateCounterClockwise()
 
-function tiltWest(grid) {
-  const gr = rotateClockwise(grid)
-  const r = tiltNorth(gr)
-  return rotateCounterClockwise(r)
-}
+    return this
+  }
 
-function tiltEast(grid) {
-  const gr = rotateCounterClockwise(grid)
-  const r = tiltNorth(gr)
-  return rotateClockwise(r)
-}
+  east() {
+    this
+      .rotateCounterClockwise()
+      .north()
+      .rotateClockwise()
 
-function tiltSouth(grid) {
-  const gr = rotateCounterClockwise(grid)
-  const gr2 = rotateCounterClockwise(gr)
+    return this
+  }
 
-  const r = tiltNorth(gr2)
+  south() {
+    this
+      .rotateCounterClockwise()
+      .rotateCounterClockwise()
+      .north()
+      .rotateClockwise()
+      .rotateClockwise()
+    return this
+  }
 
-  return rotateClockwise(rotateClockwise(r))
+  rotateClockwise() {
+    this.grid = this.grid[0].map((val, index) => this.grid.map(row => row[index]).reverse())
+    return this
+  }
+
+  rotateCounterClockwise() {
+    this.grid = this.grid[0].map((val, index) => this.grid.map(row => row[row.length - 1 - index]))
+    return this
+  }
 }
 
 function spinCycle(grid) {
-  return tiltEast(tiltSouth(tiltWest(tiltNorth(grid))))
+  return new Tilt(grid)
+    .north()
+    .west()
+    .south()
+    .east()
+    .grid
 }
 
 function transpose(array) {
   return array[0].map((_, colIndex) => array.map(row => row[colIndex]))
 }
 
-function rotateClockwise(matrix) {
-  return matrix[0].map((val, index) => matrix.map(row => row[index]).reverse())
-}
-
-function rotateCounterClockwise(matrix) {
-  return matrix[0].map((val, index) => matrix.map(row => row[row.length - 1 - index]))
-}
-
 export {
   getResult,
-  tiltNorth,
-  tiltWest,
-  tiltEast,
-  tiltSouth,
   spinCycle,
+  Tilt,
 }

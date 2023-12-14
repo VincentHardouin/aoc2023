@@ -23,6 +23,36 @@ O.#..O.#.#
     })
   })
 
+  describe('#tiltNorth', () => {
+    it('should return grid with rocks slide in the north', () => {
+      const inputString = `O....#....
+O.OO#....#
+.....##...
+OO.#O....O
+.O.....O#.
+O.#..O.#.#
+..O..#O..O
+.......O..
+#....###..
+#OO..#....`
+      const input = parseInputString(inputString)
+
+      const result = new partTwo.Tilt(input).north().grid
+
+      const expectedResult = parseInputString(`OOOO.#.O..
+OO..#....#
+OO..O##..O
+O..#.OO...
+........#.
+..#....#.#
+..O..#.O.O
+..O.......
+#....###..
+#....#....`)
+      expect(result).toStrictEqual(expectedResult)
+    })
+  })
+
   describe('#tiltWest', () => {
     it('should return grid with rocks slide in the north', () => {
       const inputString = `O....#....
@@ -37,7 +67,7 @@ O.#..O.#.#
 #OO..#....`
       const input = parseInputString(inputString)
 
-      const result = partTwo.tiltWest(input)
+      const result = new partTwo.Tilt(input).west().grid
 
       const expectedResult = parseInputString(`O....#....
 OOO.#....#
@@ -67,7 +97,7 @@ O.#..O.#.#
 #OO..#....`
       const input = parseInputString(inputString)
 
-      const result = partTwo.tiltEast(input)
+      const result = new partTwo.Tilt(input).east().grid
 
       const expectedResult = parseInputString(`....O#....
 .OOO#....#
@@ -97,7 +127,7 @@ O.#..O.#.#
 #OO..#....`
       const input = parseInputString(inputString)
 
-      const result = partTwo.tiltSouth(input)
+      const result = new partTwo.Tilt(input).south().grid
 
       const expectedResult = parseInputString(`.....#....
 ....#....#
