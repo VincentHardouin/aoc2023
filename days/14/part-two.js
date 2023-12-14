@@ -22,23 +22,10 @@ function getResult(input = getInput()) {
     .reduce((acc, row, i) => acc + (tilted.length - i) * row, 0)
 }
 
-const lineCache = new Map()
-
-const tiltNorthCache = new Map()
-
 function tiltNorth(grid) {
-  const gridKey = grid.map(l => l.join()).join('\n')
-  if (tiltNorthCache.has(gridKey))
-    return tiltNorthCache.get(gridKey)
-
   const g = transpose(grid)
 
   for (let i = 0; i < g.length; i++) {
-    if (lineCache.has(g[i].join())) {
-      lineCache.get(g[i].join())
-      continue
-    }
-
     for (let j = 1; j < g[i].length; j++) {
       if (g[i][j] === 'O') {
         for (let k = j - 1; k >= 0; k--) {
@@ -54,13 +41,9 @@ function tiltNorth(grid) {
         }
       }
     }
-
-    lineCache.set(g[i].join(), g[i])
   }
 
-  const transposeGrid = transpose(g)
-  tiltNorthCache.set(gridKey, transposeGrid)
-  return transposeGrid
+  return transpose(g)
 }
 
 function tiltWest(grid) {
