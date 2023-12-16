@@ -59,183 +59,117 @@ function getEnergy(input, start) {
 }
 
 function getNext(current, input) {
-  const { x, y } = current
+  const nextMoves = []
 
   if (current.value === '.') {
-    if (current.from === 'left') {
-      if (current.x === input[0].length - 1)
-        return []
-
-      return [getRight(current, input)]
-    }
-    else if (current.from === 'right') {
-      if (current.x === 0)
-        return []
-
-      return [getLeft(current, input)]
-    }
-    else if (current.from === 'top') {
-      if (current.y === input.length - 1)
-        return []
-
-      return [getBottom(current, input)]
-    }
-    else if (current.from === 'bottom') {
-      if (current.y === 0)
-        return []
-
-      return [getTop(current, input)]
+    switch (current.from) {
+      case 'left':
+        nextMoves.push(getRight(current, input))
+        break
+      case 'right':
+        nextMoves.push(getLeft(current, input))
+        break
+      case 'top':
+        nextMoves.push(getBottom(current, input))
+        break
+      case 'bottom':
+        nextMoves.push(getTop(current, input))
+        break
     }
   }
   else if (current.value === '\\') {
-    if (current.from === 'left') {
-      if (current.y === input.length - 1)
-        return []
-
-      return [getBottom(current, input)]
-    }
-    else if (current.from === 'right') {
-      if (current.y === 0)
-        return []
-
-      return [getTop(current, input)]
-    }
-    else if (current.from === 'top') {
-      if (current.x === input[0].length - 1)
-        return []
-
-      return [getRight(current, input)]
-    }
-    else if (current.from === 'bottom') {
-      if (current.x === 0)
-        return []
-
-      return [getLeft(current, input)]
+    switch (current.from) {
+      case 'left':
+        nextMoves.push(getBottom(current, input))
+        break
+      case 'right':
+        nextMoves.push(getTop(current, input))
+        break
+      case 'top':
+        nextMoves.push(getRight(current, input))
+        break
+      case 'bottom':
+        nextMoves.push(getLeft(current, input))
+        break
     }
   }
   else if (current.value === '/') {
-    if (current.from === 'left') {
-      if (current.y === 0)
-        return []
-
-      return [getTop(current, input)]
-    }
-    else if (current.from === 'right') {
-      if (current.y === input.length - 1)
-        return []
-
-      return [getBottom(current, input)]
-    }
-    else if (current.from === 'top') {
-      if (current.x === 0)
-        return []
-
-      return [getLeft(current, input)]
-    }
-    else if (current.from === 'bottom') {
-      if (current.x === input[0].length - 1)
-        return []
-
-      return [getRight(current, input)]
+    switch (current.from) {
+      case 'left':
+        nextMoves.push(getTop(current, input))
+        break
+      case 'right':
+        nextMoves.push(getBottom(current, input))
+        break
+      case 'top':
+        nextMoves.push(getLeft(current, input))
+        break
+      case 'bottom':
+        nextMoves.push(getRight(current, input))
+        break
     }
   }
   else if (current.value === '|') {
-    if (current.from === 'left') {
-      const nexts = []
-      const y = current.y - 1
-      const y2 = current.y + 1
-
-      if (y >= 0)
-        nexts.push(getTop(current, input))
-
-      if (y2 <= input.length - 1)
-        nexts.push(getBottom(current, input))
-
-      return nexts
-    }
-    else if (current.from === 'right') {
-      const nexts = []
-      const y = current.y + 1
-      const y2 = current.y - 1
-
-      if (y <= input.length - 1)
-        nexts.push(getBottom(current, input))
-
-      if (y2 >= 0)
-        nexts.push(getTop(current, input))
-
-      return nexts
-    }
-    else if (current.from === 'top') {
-      if (current.y === input.length - 1)
-        return []
-
-      return [getBottom(current, input)]
-    }
-    else if (current.from === 'bottom') {
-      if (current.y === 0)
-        return []
-      return [getTop(current, input)]
+    switch (current.from) {
+      case 'left':
+        nextMoves.push(getTop(current, input), getBottom(current, input))
+        break
+      case 'right':
+        nextMoves.push(getTop(current, input), getBottom(current, input))
+        break
+      case 'top':
+        nextMoves.push(getBottom(current, input))
+        break
+      case 'bottom':
+        nextMoves.push(getTop(current, input))
+        break
     }
   }
   else if (current.value === '-') {
-    if (current.from === 'left') {
-      if (current.x === input[0].length - 1)
-        return []
-
-      return [getRight(current, input)]
-    }
-    else if (current.from === 'right') {
-      if (current.x === 0)
-        return []
-
-      return [getLeft(current, input)]
-    }
-    else if (current.from === 'top') {
-      const nexts = []
-
-      const x = current.x + 1
-      const x2 = current.x - 1
-
-      if (x <= input[0].length - 1)
-        nexts.push(getRight(current, input))
-      if (x2 >= 0)
-        nexts.push(getLeft(current, input))
-
-      return nexts
-    }
-    else if (current.from === 'bottom') {
-      const nexts = []
-
-      const x = current.x + 1
-      const x2 = current.x - 1
-
-      if (x <= input[0].length - 1)
-        nexts.push(getRight(current, input))
-
-      if (x2 >= 0)
-        nexts.push(getLeft(current, input))
-
-      return nexts
+    switch (current.from) {
+      case 'left':
+        nextMoves.push(getRight(current, input))
+        break
+      case 'right':
+        nextMoves.push(getLeft(current, input))
+        break
+      case 'top':
+        nextMoves.push(getRight(current, input), getLeft(current, input))
+        break
+      case 'bottom':
+        nextMoves.push(getRight(current, input), getLeft(current, input))
+        break
     }
   }
 
-  return []
+  return nextMoves.filter(n => n !== null)
 }
 
 function getRight(current, input) {
+  if (current.x + 1 >= input[0].length)
+    return null
+
   return { ...input[current.y][current.x + 1], from: 'left' }
 }
 
 function getLeft(current, input) {
+  if (current.x - 1 < 0)
+    return null
+
   return { ...input[current.y][current.x - 1], from: 'right' }
 }
 
 function getTop(current, input) {
+  if (current.y - 1 < 0)
+    return null
+
   return { ...input[current.y - 1][current.x], from: 'bottom' }
 }
 
 function getBottom(current, input) {
+  if (current.y + 1 >= input.length)
+    return null
+
   return { ...input[current.y + 1][current.x], from: 'top' }
 }
 
