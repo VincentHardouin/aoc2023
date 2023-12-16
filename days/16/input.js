@@ -11,8 +11,8 @@ function parseInputString(input) {
   return input
     .trim()
     .split('\n')
-    .map((value) => {
-      return value
+    .map((line, y) => {
+      return line.split('').map((value, x) => ({ x, y, value }))
     })
 }
 
