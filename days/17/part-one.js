@@ -1,170 +1,133 @@
-import _ from 'lodash'
 import { getInput } from './input.js'
 
-class Position {
-  constructor(x, y, heatLoss) {
-    this.x = x
-    this.y = y
-    this.heatLoss = heatLoss
-    this.cost = Number.POSITIVE_INFINITY
-    this.neighbours = []
-    this.parent = null
+const dirs = [[-1, 0], [0, 1], [1, 0], [0, -1]]
+
+// cf: https://www.sahinarslan.tech/posts/deep-dive-into-data-structures-using-javascript-heap-binary-heap
+class Heap {
+  constructor(comparator) {
+    this.heap = []
+    this.comparator = comparator || ((a, b) => a - b)
   }
 
-  get key() {
-    return `${this.x},${this.y}`
+  size() { return this.heap.length }
+
+  isEmpty() { return this.size() == 0 }
+
+  peek() { return this.heap[0] }
+
+  insert(value) { this.heap.push(value); this.heapifyUp() }
+
+  delete() {
+    if (this.isEmpty())
+      return null
+    const poppedValue = this.peek()
+    const bottom = this.size() - 1
+    if (bottom > 0)
+      this.swap(0, bottom)
+    this.heap.pop()
+    this.heapifyDown()
+    return poppedValue
   }
 
-  isValidDirection(parent) {
-    const lastX = new Set([this.x])
-    const lastY = new Set([this.y])
+  parentIndex(i) {
+    return Math.floor((i - 1) / 2)
+  }
 
-    if (parent) {
-      lastX.add(parent.x)
-      lastY.add(parent.y)
+  parentValue(i) {
+    return i < this.size() && this.parentIndex(i) >= 0 ? this.heap[this.parentIndex(i)] : undefined
+  }
+
+  leftChildIndex(i) {
+    return 2 * i + 1
+  }
+
+  leftChildValue(i) {
+    return this.hasLeftChild(i) ? this.heap[this.leftChildIndex(i)] : undefined
+  }
+
+  hasLeftChild(i) {
+    return this.leftChildIndex(i) < this.size()
+  }
+
+  rightChildIndex(i) {
+    return 2 * i + 2
+  }
+
+  rightChildValue(i) {
+    return this.hasRightChild(i) ? this.heap[this.rightChildIndex(i)] : undefined
+  }
+
+  hasRightChild(i) {
+    return this.rightChildIndex(i) < this.size()
+  }
+
+  swap(i, j) {
+    [this.heap[i], this.heap[j]] = [this.heap[j], this.heap[i]]
+  }
+
+  heapifyUp() {
+    let nodeIndex = this.size() - 1
+    while (nodeIndex > 0 && this.comparator(this.parentValue(nodeIndex), this.heap[nodeIndex]) > 0) {
+      this.swap(nodeIndex, this.parentIndex(nodeIndex))
+      nodeIndex = this.parentIndex(nodeIndex)
     }
-
-    if (parent?.parent) {
-      lastX.add(parent.parent.x)
-      lastY.add(parent.parent.y)
-    }
-
-    if (parent?.parent?.parent) {
-      lastX.add(parent.parent.parent.x)
-      lastY.add(parent.parent.parent.y)
-    }
-
-    let isValidDirection = true
-    if (lastX.size === 1 && lastY.size === 4)
-      isValidDirection = false
-
-    if (lastY.size === 1 && lastX.size === 4)
-      isValidDirection = false
-
-    return isValidDirection
   }
 
-  get validNeighbours() {
-    return this.neighbours.filter(neighbour => neighbour.isValidDirection(this))
-  }
-}
-
-class Path {
-  constructor(positions, start, end) {
-    this.positions = positions
-    this.start = start
-    this.end = end
-  }
-
-  getLowestTotalHeatLoss() {
-    const visited = new Map()
-    this.start.cost = 0
-    let toBeVisited = [this.start]
-
-    while (toBeVisited.length > 0) {
-      const position = _.minBy(toBeVisited, 'cost')
-      toBeVisited = toBeVisited.filter(
-        positionToVisit => positionToVisit.key !== position.key,
+  heapifyDown() {
+    let currNodeIndex = 0
+    while (this.hasLeftChild(currNodeIndex)) {
+      let smallerChildIndex = this.leftChildIndex(currNodeIndex)
+      if (
+        this.hasRightChild(currNodeIndex)
+          && this.comparator(
+            this.rightChildValue(currNodeIndex),
+            this.leftChildValue(currNodeIndex),
+          ) < 0
       )
+        smallerChildIndex = this.rightChildIndex(currNodeIndex)
 
-      visited.set(`${position.key},${position.parent}`, position)
-      console.log(position.validNeighbours.length)
-      position.validNeighbours.forEach((neighbour) => {
-        if (!visited.get(neighbour.key)) {
-          const cumulativeHeatLoss = position.cost + neighbour.heatLoss
-          console.log(JSON.stringify({
-            key: neighbour.key,
-            cost: neighbour.cost,
-            cumulativeHeatLoss,
-            positionKey: position.key,
-          }))
-          if (cumulativeHeatLoss < neighbour.cost && neighbour.isValidDirection(position)) {
-            neighbour.cost = cumulativeHeatLoss
-            neighbour.parent = position
-          }
-
-          if (!visited.get(`${neighbour.key},${neighbour.parent}`))
-            toBeVisited.push(neighbour)
-        }
-      })
-    }
-
-    return this.end.cost
-  }
-
-  getOptimalPath() {
-    const optimalPath = []
-    let current = this.end
-
-    while (current !== this.start) {
-      optimalPath.unshift(current)
-      current = current.parent
-    }
-
-    optimalPath.unshift(this.start)
-    return optimalPath
-  }
-
-  printOptimalPath(input) {
-    const optimalPath = this.getOptimalPath()
-
-    const grid = []
-
-    for (let y = 0; y < input.length; y++) {
-      grid[y] = []
-      for (let x = 0; x < input[0].length; x++)
-        grid[y][x] = '.'
-    }
-
-    optimalPath.forEach((position) => {
-      grid[position.y][position.x] = '#'
-    })
-
-    grid.forEach((row) => {
-      console.log(row.join(''))
-    })
-  }
-}
-
-function getPositions(input) {
-  const positions = new Map()
-  for (let y = 0; y < input.length; y++) {
-    for (let x = 0; x < input[0].length; x++) {
-      const position = new Position(x, y, input[y][x])
-      positions.set(position.key, position)
+      if (this.comparator(this.heap[currNodeIndex], this.heap[smallerChildIndex]) <= 0)
+        break
+      this.swap(currNodeIndex, smallerChildIndex)
+      currNodeIndex = smallerChildIndex
     }
   }
-  return positions
 }
 
 function getResult(input = getInput()) {
-  const positions = getPositions(input)
+  const maxDist = 3
+  const height = input.length
+  const width = input[0].length
 
-  positions.forEach((position, key, map) => {
-    const up = map.get(`${position.x},${position.y - 1}`)
-    const right = map.get(`${position.x + 1},${position.y}`)
-    const bottom = map.get(`${position.x},${position.y + 1}`)
-    const left = map.get(`${position.x - 1},${position.y}`)
+  const visited = new Set()
+  const heap = new Heap((a, b) => a[0] - b[0])
 
-    const neighbours = []
-    if (up)
-      neighbours.push(up)
-    if (right)
-      neighbours.push(right)
-    if (bottom)
-      neighbours.push(bottom)
-    if (left)
-      neighbours.push(left)
+  let best = Number.POSITIVE_INFINITY
 
-    position.neighbours = neighbours
-  })
+  heap.insert([0, 0, 0, 0, 0]) // heat, row, col, dir, dirCount
 
-  const start = positions.get('0,0')
-  const end = positions.get(`${input[0].length - 1},${input.length - 1}`)
-  const path = new Path(positions, start, end)
-  const result = path.getLowestTotalHeatLoss()
-  path.printOptimalPath(input)
-  return result
+  while (!heap.isEmpty()) {
+    const [heat, row, col, dir, dirCount] = heap.delete()
+    const k = `${row},${col},${dir},${dirCount}`
+    if (visited.has(k))
+      continue
+    visited.add(k)
+    if (row == height - 1 && col == width - 1) {
+      best = Math.min(best, heat)
+      continue
+    }
+    for (const [d, [dr, dc]] of dirs.entries()) {
+      const y = row + dr
+      const x = col + dc
+      const nCount = (d === dir) ? dirCount + 1 : 1
+      if (y < 0 || y >= height || x < 0 || x >= width || (d + 2) % 4 === dir)
+        continue
+      if (nCount > maxDist)
+        continue
+      heap.insert([heat + input[y][x], y, x, d, nCount])
+    }
+  }
+  return best
 }
 
 export {
