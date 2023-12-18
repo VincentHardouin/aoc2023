@@ -11,8 +11,10 @@ function parseInputString(input) {
   return input
     .trim()
     .split('\n')
-    .map((value) => {
-      return value
+    .map((line) => {
+      const [dir, dist] = line.split(' ')
+      const color = line.split('#')[1].split(')')[0]
+      return { dir, dist: Number(dist), color }
     })
 }
 
