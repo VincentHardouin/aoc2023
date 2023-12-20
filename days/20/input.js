@@ -11,8 +11,12 @@ function parseInputString(input) {
   return input
     .trim()
     .split('\n')
-    .map((value) => {
-      return value
+    .map((line) => {
+      return {
+        type: line[0],
+        moduleName: line.split(' ')[0].slice(1),
+        destinations: line.split('->')[1].trim().split(',').map(v => v.trim()),
+      }
     })
 }
 
