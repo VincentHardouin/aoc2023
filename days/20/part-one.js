@@ -6,13 +6,17 @@ function getResult(input = getInput()) {
       if (module.type === '%')
         module.state = false
       if (module.type === '&')
-        module.history = []
-
+        module.state = []
       return module
     })
 
-  const buttonPush = modules
-    .find(mod => mod.type === 'b')
+  modules.forEach((module) => {
+    module.destinations.forEach((dest) => {
+      const mod = modules.find(mod => mod.moduleName === dest)
+      if (mod?.type === '&')
+        mod.state[module.moduleName] = 'low'
+    })
+  })
 
   const queue = []
 
@@ -21,44 +25,41 @@ function getResult(input = getInput()) {
     low: 0,
     high: 0,
   }
-  while (queue.length > 0 || buttonPushes < 1) {
+  while (queue.length > 0 || buttonPushes < 1000) {
     if (queue.length === 0) {
       buttonPushes++
-      buttonPush.destinations.forEach((dest) => {
-        queue.push({ from: 'broadcaster', target: dest, pulseType: 'low' })
-      })
-      stats.low++
+      queue.push({ from: 'button', target: 'broadcaster', pulseType: 'low' })
     }
 
     const next = queue.shift()
-    console.log(next)
+    stats[next.pulseType]++
+
     const module = modules.find(mod => mod.moduleName === next.target)
     if (!module)
       continue
 
-    stats[next.pulseType]++
-
-    if (module.type === 'b') {
+    if (module.moduleName === 'broadcaster') {
       module.destinations.forEach((dest) => {
         queue.push({ from: module.moduleName, target: dest, pulseType: 'low' })
       })
     }
-    else if (module.type === '%' && next.pulseType === 'low') {
+
+    if (module.type === '%' && next.pulseType === 'low') {
       module.state = !module.state
       const pulse = module.state ? 'high' : 'low'
       module.destinations.forEach((dest) => {
         queue.push({ from: module.moduleName, target: dest, pulseType: pulse })
       })
     }
-    else if (module.type === '&') {
-      module.history[next.from] = next.pulseType
-      const pulse = Object.values(module.history).every(pulse => pulse === 'high') ? 'low' : 'high'
+
+    if (module.type === '&') {
+      module.state[next.from] = next.pulseType
+      const pulse = Object.values(module.state).every(pulse => pulse === 'high') ? 'low' : 'high'
       module.destinations.forEach((dest) => {
         queue.push({ from: module.moduleName, target: dest, pulseType: pulse })
       })
     }
   }
-  console.log(stats)
 
   return stats.low * stats.high
 }

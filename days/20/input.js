@@ -13,8 +13,8 @@ function parseInputString(input) {
     .split('\n')
     .map((line) => {
       return {
-        type: line[0],
-        moduleName: line.split(' ')[0].slice(1),
+        type: line.match('[%&]') ? line.match('[%&]')[0] : null,
+        moduleName: line.split(' ')[0].replace(/(%|&)/, ''),
         destinations: line.split('->')[1].trim().split(',').map(v => v.trim()),
       }
     })
