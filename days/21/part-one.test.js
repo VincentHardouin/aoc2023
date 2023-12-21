@@ -5,12 +5,22 @@ import { parseInputString } from './input.js'
 describe('day21 | part-one', () => {
   describe('#getResult', () => {
     it('should ', () => {
-      const inputString = ``
+      const inputString = `...........
+.....###.#.
+.###.##..#.
+..#.#...#..
+....#.#....
+.##..S####.
+.##..#...#.
+.......##..
+.##.#.####.
+.##..##.##.
+...........`
       const input = parseInputString(inputString)
 
-      const result = partOne.getResult(input)
+      const result = partOne.getResult(input, 6)
 
-      expect(result).toBe()
+      expect(result).toBe(16)
     })
   })
 })
