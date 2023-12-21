@@ -61,6 +61,8 @@ function getResult(input = getInput()) {
     }
   }
 
+  console.log(stats)
+
   return stats.low * stats.high
 }
 
