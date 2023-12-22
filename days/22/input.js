@@ -12,7 +12,11 @@ function parseInputString(input) {
     .trim()
     .split('\n')
     .map((value) => {
-      return value
+      const [start, end] = value.split('~')
+      return {
+        start: start.split(',').map(Number),
+        end: end.split(',').map(Number),
+      }
     })
 }
 
