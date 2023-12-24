@@ -12,7 +12,10 @@ function parseInputString(input) {
     .trim()
     .split('\n')
     .map((value) => {
-      return value
+      return {
+        position: value.split('@')[0].split(',').map(Number),
+        velocity: value.split('@')[1].split(',').map(Number),
+      }
     })
 }
 
